@@ -1,4 +1,6 @@
 #include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_2_0_API_VERSION
+#define NPY_TARGET_VERSION NPY_2_0_API_VERSION
 #include <math.h>
 #include <cmath>
 #include <iostream>

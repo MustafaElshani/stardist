@@ -16,21 +16,12 @@ jobs:
       matrix:
         # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
         os: [ubuntu-20.04, windows-latest, macos-latest] # macos-latest is arm64-based
-        python-version: ['3.6', '3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
-        tensorflow: [1, 2]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+        tensorflow: [2]
         include:
-          # always set 'package-extras' conditional on tensorflow version
-          - tensorflow: 1
-            package-extras: 'test,tf1'
+          # always set 'package-extras' for testing
           - tensorflow: 2
             package-extras: 'test'
-          # test bioimage.io export with python 3.7 and tensorflow 1
-          - python-version: '3.7'
-            tensorflow: 1
-            package-extras: 'test,tf1,bioimageio'
-          # install edt with numpy>=1.20 when testing with python 3.9
-          - python-version: '3.9'
-            deps-extra: 'edt "numpy>=1.20"'
           # add extra run to test latest tensorflow with legacy keras
           - os: ubuntu-20.04
             python-version: '>=3.12 <3.13'  # intentionally be different than '3.12' to cause an additional combination
@@ -38,45 +29,10 @@ jobs:
             package-extras: 'test'
             deps-extra: 'tf_keras'
             exec-extra: 'echo "TF_USE_LEGACY_KERAS=1" >> $GITHUB_ENV'
-          # cases for using x86_64-based runner (macos-13)
-          - os: macos-13
-            python-version: '3.6'  # no arm64 wheels
-            tensorflow: 1
-            package-extras: 'test,tf1'
-          - os: macos-13
-            python-version: '3.6'  # no arm64 wheels
-            tensorflow: 2
-            package-extras: 'test'
-          - os: macos-13
-            python-version: '3.7'  # no arm64 wheels
-            tensorflow: 1
-            package-extras: 'test,tf1'
-          - os: macos-13
-            python-version: '3.7'  # no arm64 wheels
-            tensorflow: 2
-            package-extras: 'test'
           - os: macos-13
             python-version: '>=3.12 <3.13'  # intentionally be different than '3.12' to cause an additional combination
             tensorflow: 2
             package-extras: 'test'
-        exclude:
-          # https://www.tensorflow.org/install/source#tested_build_configurations
-          - python-version: '3.8'
-            tensorflow: 1
-          - python-version: '3.9'
-            tensorflow: 1
-          - python-version: '3.10'
-            tensorflow: 1
-          - python-version: '3.11'
-            tensorflow: 1
-          - python-version: '3.12'
-            tensorflow: 1
-          - os: windows-latest
-            tensorflow: 1
-          - os: macos-latest
-            python-version: '3.6'
-          - os: macos-latest
-            python-version: '3.7'
 
     steps:
       - name: Install Python
@@ -124,8 +80,7 @@ jobs:
         run: ${{ matrix.exec-extra }}
         shell: bash
 
-      - name: Disable PytestReturnNotNoneWarning (Python 3.7+)
-        if: matrix.python-version != 3.6
+      - name: Disable PytestReturnNotNoneWarning
         run: echo "PYTEST_ADDOPTS='-W ignore::pytest.PytestReturnNotNoneWarning'" >> $GITHUB_ENV
         shell: bash
 

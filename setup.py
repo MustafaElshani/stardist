@@ -1,13 +1,14 @@
 from __future__ import absolute_import, print_function
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
-from numpy import get_include
 from os import path
 from glob import glob
 
 
 def get_numpy_include_dirs():
-    return [get_include()]
+    # Import numpy only when needed during build
+    import numpy
+    return [numpy.get_include()]
 
 
 class build_ext_openmp(build_ext):
@@ -98,7 +99,7 @@ setup(
     author_email='research@uweschmidt.org, martin.weigert@epfl.ch',
     license='BSD-3-Clause',
     packages=find_packages(),
-    python_requires='>=3.6',
+    python_requires='>=3.9',
 
     cmdclass={'build_ext': build_ext_openmp},
 
@@ -127,9 +128,6 @@ setup(
 
         'Operating System :: OS Independent',
 
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
@@ -137,9 +135,10 @@ setup(
     ],
 
     install_requires=[
+        'numpy>=2.0.0',
         'csbdeep>=0.8.0',
-        'scikit-image',
-        'numba',
+        'scikit-image>=0.22.0',
+        'numba>=0.59.0',
         'imageio',
     ],
 

@@ -1,4 +1,6 @@
 #include <Python.h>
+#define NPY_NO_DEPRECATED_API NPY_2_0_API_VERSION
+#define NPY_TARGET_VERSION NPY_2_0_API_VERSION
 #include "numpy/arrayobject.h"
 #include "numpy/npy_math.h"
 #include "stardist3d_impl.h"
